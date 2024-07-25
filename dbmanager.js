@@ -1,4 +1,5 @@
 const dbmgr = require("./db");
+
 const db = dbmgr.db;
 
 function searchPatient(query) {
@@ -46,6 +47,7 @@ function createPatient(name, nationalCode) {
     return db
       .prepare(`INSERT INTO patients (name, nationalCode) VALUES (?, ?)`)
       .run(name, nationalCode);
+
   } catch (err) {
     console.error(err);
     throw err;
@@ -63,11 +65,48 @@ function createCase(patientid, image) {
   }
 }
 
+function initDb() {
+  db.prepare(
+    `
+    CREATE TABLE IF NOT EXISTS patients (
+	    id INTEGER PRIMARY KEY,
+	    name TEXT NOT NULL,
+	    nationalCode TEXT NOT NULL
+    );`
+  )
+    .run();
+
+  db.prepare(
+    `
+    CREATE TABLE IF NOT EXISTS cases (
+      id INTEGER PRIMARY KEY,
+      image BLOB NOT NULL,
+      patientId INTEGER NOT NULL,
+      FOREIGN KEY(patientId) REFERENCES patients(id)
+    );`
+  )
+    .run();
+
+  // seed some patients data
+  db.prepare(
+    `
+    INSERT OR IGNORE INTO patients (id, name, nationalCode)
+    VALUES (1, 'patient1', '123'), (2, 'patient2', '345'), (3, 'patient3', '568');`
+  )
+    .run();
+}
+
+function close() {
+  db.close();
+}
+
 module.exports = {
   searchPatient,
   getPatient,
   updatePatient,
   createPatient,
   createCase,
-  getPatientWithImages
+  getPatientWithImages,
+  close,
+  initDb
 };

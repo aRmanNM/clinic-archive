@@ -148,12 +148,34 @@ function showCanvas(id) {
   var patientid = document.getElementById("patient-id").innerText;
   document.getElementById("canvas-patientid").innerText = patientid;
 
+  var canvasLog = document.getElementById('canvas-log');
+
   canvas = new fabric.Canvas("canvas-case", {
-    width: 700,
-    height: 600,
     isDrawingMode: true,
-    imageSmoothingEnabled: false
+    imageSmoothingEnabled: false,
+    allowTouchScrolling: false,
+    enablePointerEvents: true
   });
+
+  var originalFire = canvas.fire;
+  canvas.fire = function (eventName, options) {
+    // console.log('Event:', eventName, options);
+    canvasLog.textContent = `${eventName} ` + canvasLog.textContent;
+    originalFire.call(this, eventName, options);
+  };
+
+  window.addEventListener('resize', resizeCanvas, false);
+
+  function resizeCanvas() {
+    const body = document.getElementById('body');
+    const canvasTop = document.getElementById('canvas-top');
+    canvas.setHeight(body.offsetHeight - canvasTop.clientHeight);
+    canvas.setWidth(body.offsetWidth);
+    canvas.renderAll();
+  }
+
+  // resize on init
+  resizeCanvas();
 
   // document.getElementById('canvas-brush-size').value = 3;
   canvas.freeDrawingBrush.width = 1 * 3;

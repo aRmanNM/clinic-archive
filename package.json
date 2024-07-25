@@ -10,7 +10,7 @@
   },
   "author": "arman_naeimi",
   "license": "ISC",
-  "description": "",
+  "description": "patient note software",
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
     "@electron-forge/maker-deb": "^7.4.0",

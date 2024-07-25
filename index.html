@@ -1,102 +1,83 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>نرم افزار ثبت نسخه تصویری - صفحه اصلی</title>
-    <link rel="stylesheet" href="bootstrap.rtl.min.css" />
-  </head>
 
-  <body>
-    <div class="container text-center">
-      <!-- search -->
-      <section id="search">
-        <h1>جستجوی مراجعین</h1>
-        <div class="d-flex">
-          <input
-            class="form-control"
-            id="search-input"
-            type="text"
-            placeholder="کد ملی"
-          />
-          <input
-            class="btn btn-primary"
-            type="submit"
-            value="جستجو"
-            onclick="searchPatient()"
-          />
-          <input
-            class="btn btn-secondary"
-            type="button"
-            value="افزودن مراجع جدید"
-            onclick="showForm()"
-          />
-        </div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">نام</th>
-              <th scope="col">کد ملی</th>
-              <th scope="col">اقدامات</th>
-            </tr>
-          </thead>
-          <tbody id="search-result">
-          </tbody>
-        </table>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نرم افزار ثبت نسخه تصویری - صفحه اصلی</title>
+  <link rel="stylesheet" href="bootstrap.rtl.min.css" />
+  <link rel="stylesheet" href="./styles.css">
+</head>
 
-      <!-- form -->
-      <section id="form">
-        <h1>تعریف/ویرایش مراجعین</h1>
-        <input class="form-control" id="form-id" disabled type="text" placeholder="شناسه" />
-        <input class="form-control" id="form-nationalcode" type="text" placeholder="کد ملی" />
-        <input class="form-control" id="form-name" type="text" placeholder="نام" />
+<body id="body">
+  <div class="container text-center">
+    <!-- search -->
+    <section id="search">
+      <h1>جستجوی مراجعین</h1>
+      <div class="d-flex">
+        <input class="form-control" id="search-input" type="text" placeholder="کد ملی" />
+        <input class="btn btn-primary" type="submit" value="جستجو" onclick="searchPatient()" />
+        <input class="btn btn-secondary" type="button" value="افزودن مراجع جدید" onclick="showForm()" />
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">نام</th>
+            <th scope="col">کد ملی</th>
+            <th scope="col">اقدامات</th>
+          </tr>
+        </thead>
+        <tbody id="search-result">
+        </tbody>
+      </table>
+    </section>
 
-        <input
-          class="btn btn-primary"
-          id="form-button"
-          type="button"
-          onclick="createOrUpdatePatient()"
-        />
-      </section>
+    <!-- form -->
+    <section id="form">
+      <h1>تعریف/ویرایش مراجعین</h1>
+      <input class="form-control" id="form-id" disabled type="text" placeholder="شناسه" />
+      <input class="form-control" id="form-nationalcode" type="text" placeholder="کد ملی" />
+      <input class="form-control" id="form-name" type="text" placeholder="نام" />
 
-      <!-- patient -->
-      <section id="patient">
-        <h1>صفحه مراجعه کننده</h1>
-        <p id="patient-id"></p>
-        <p id="patient-name"></p>
-        <p id="patient-nationalCode"></p>
-        <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
-        <hr />
-        <div id="patient-gallery"></div>
-        <button class="btn btn-info" onclick="document.getElementById('patient-upload').click()">
-          آپلود نسخه
-        </button>
-        <input
-          type="file"
-          id="patient-upload"
-          style="display: none"
-          onchange="uploadImage()"
-        />
-        <button class="btn btn-primary" onclick="showCanvas()">ثبت نسخه جدید</button>
-      </section>
+      <input class="btn btn-primary" id="form-button" type="button" onclick="createOrUpdatePatient()" />
+    </section>
 
-      <!-- canvas -->
-      <section id="canvas">
-        <p id="canvas-patientid"></p>
-        <select class="form-select w-auto" name="اندازه قلم" id="canvas-brush-size" onchange="changeBrushSize()">
-          <option value="3">باریک</option>
-          <option value="5">متوسط</option>
-          <option value="8">زخیم</option>
-        </select>
-        <canvas id="canvas-case" style="border: 1px solid #000000"></canvas>
-        <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnFromCanvas()" />
-        <input class="btn btn-success" type="button" value="ذخیره" onclick="saveCanvas()" />
-        <input class="btn btn-danger" value="پاک کردن" onclick="clearCanvas()" />
-      </section>
+    <!-- patient -->
+    <section id="patient">
+      <h1>صفحه مراجعه کننده</h1>
+      <p id="patient-id"></p>
+      <p id="patient-name"></p>
+      <p id="patient-nationalCode"></p>
+      <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
+      <hr />
+      <div id="patient-gallery"></div>
+      <button class="btn btn-info" onclick="document.getElementById('patient-upload').click()">
+        آپلود نسخه
+      </button>
+      <input type="file" id="patient-upload" style="display: none" onchange="uploadImage()" />
+      <button class="btn btn-primary" onclick="showCanvas()">ثبت نسخه جدید</button>
+    </section>
+  </div>
+
+  <!-- canvas -->
+  <section id="canvas">
+    <div id="canvas-top">
+      <p id="canvas-patientid"></p>
+      <select class="form-select w-auto" name="اندازه قلم" id="canvas-brush-size" onchange="changeBrushSize()">
+        <option value="3">باریک</option>
+        <option value="5">متوسط</option>
+        <option value="8">زخیم</option>
+      </select>
+      <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnFromCanvas()" />
+      <input class="btn btn-success" type="button" value="ذخیره" onclick="saveCanvas()" />
+      <input class="btn btn-danger" value="پاک کردن" onclick="clearCanvas()" />
+      <textarea id="canvas-log" cols="100" rows="2"></textarea>
     </div>
+    <canvas id="canvas-case" style="border: 1px solid #000000"></canvas>
+  </section>
 
-    <script src="script.js"></script>
-    <script src="fabric.min.js.js"></script>
-  </body>
+  <script src="script.js"></script>
+  <script src="fabric.min.js.js"></script>
+</body>
+
 </html>

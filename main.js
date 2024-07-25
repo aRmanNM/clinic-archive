@@ -1,9 +1,14 @@
 const { app, BrowserWindow } = require("electron/main");
-const db = require("./db");
+const db = require("./dbmanager")
 const path = require("node:path");
 
+let win;
+
+// avoid 
+if (require('electron-squirrel-startup')) app.quit();
+
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1366,
     height: 768,
     webPreferences: {
@@ -14,54 +19,39 @@ const createWindow = () => {
     },
   });
 
+  win.menuBarVisible = false;
   win.loadFile("index.html");
+
+  win.on('closed', () => {
+    win = null;
+  })
 };
 
-app.whenReady().then(() => {
-  // create required tables structure
-  db.db
-    .prepare(
-      `
-    CREATE TABLE IF NOT EXISTS patients (
-	    id INTEGER PRIMARY KEY,
-	    name TEXT NOT NULL,
-	    nationalCode TEXT NOT NULL
-    );`
-    )
-    .run();
-
-  db.db
-    .prepare(
-      `
-    CREATE TABLE IF NOT EXISTS cases (
-      id INTEGER PRIMARY KEY,
-      image BLOB NOT NULL,
-      patientId INTEGER NOT NULL,
-      FOREIGN KEY(patientId) REFERENCES patients(id)
-    );`
-    )
-    .run();
-
-  // seed some patients data
-  db.db
-    .prepare(
-      `
-    INSERT OR IGNORE INTO patients (id, name, nationalCode)
-    VALUES (1, 'patient1', '123'), (2, 'patient2', '345'), (3, 'patient3', '568');`
-    )
-    .run();
-
+app.on('ready', () => {
   createWindow();
+  db.initDb();
+});
 
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
+app.on('activate', () => {
+  if (win === null) {
+    createWindow();
+  }
 });
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  // Perform any necessary cleanup here
+  // For example, closing database connections, terminating background processes, etc.
+
+  db.close();
+});
+
+// Ensure all Electron processes are terminated
+app.on('quit', () => {
+  app.exit();
 });
