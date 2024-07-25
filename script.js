@@ -4,11 +4,23 @@ var canvas;
 function searchPatient() {
   let input = document.getElementById("search-input");
   let resultList = document.getElementById("search-result");
+  let searchTable = document.getElementById("search-table");
+  let searchMessage = document.getElementById("search-message");
 
-  const result = window.sqlite.dbrepo?.searchPatient(input.value);
+  let result;
+  if (input.value) {
+    result = window.sqlite.dbrepo?.searchPatient(input.value);
+  }
 
-  if (!result) return;
+  if (!input.value || !result) {
+    searchTable.hidden = true;
+    searchMessage.hidden = false;
+    searchMessage.innerText = "هیچی پیدا نشد";
+    return;
+  }
 
+  searchTable.hidden = false;
+  searchMessage.hidden = true;
   resultList.replaceChildren();
 
   result.forEach((element) => {

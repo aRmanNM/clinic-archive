@@ -5,7 +5,7 @@ const db = dbmgr.db;
 function searchPatient(query) {
   try {
     return db
-      .prepare(`SELECT * FROM patients WHERE nationalCode LIKE '%${query}%'`)
+      .prepare(`SELECT * FROM patients WHERE nationalCode LIKE '%${query}%' OR name LIKE '%${query}%'`)
       .all();
   } catch (err) {
     console.error(err);
