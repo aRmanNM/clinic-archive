@@ -12,7 +12,7 @@ function searchPatient() {
     result = window.sqlite.dbrepo?.searchPatient(input.value);
   }
 
-  if (!input.value || !result) {
+  if (!input.value || result.length === 0) {
     searchTable.hidden = true;
     searchMessage.hidden = false;
     searchMessage.innerText = "هیچی پیدا نشد";
