@@ -31,22 +31,22 @@ function getPatientWithImages(id) {
   }
 }
 
-function updatePatient(id, name, nationalCode) {
+function updatePatient(id, name, nationalCode, lastEditedAt) {
   try {
     return db
-      .prepare(`UPDATE patients SET name = ?, nationalCode = ? WHERE id = ?`)
-      .run(name, nationalCode, id);
+      .prepare(`UPDATE patients SET name = ?, nationalCode = ?, lastEditedAt = ? WHERE id = ?`)
+      .run(name, nationalCode, lastEditedAt, id);
   } catch (err) {
     console.error(err);
     throw err;
   }
 }
 
-function createPatient(name, nationalCode) {
+function createPatient(name, nationalCode, createdAt) {
   try {
     return db
-      .prepare(`INSERT INTO patients (name, nationalCode) VALUES (?, ?)`)
-      .run(name, nationalCode);
+      .prepare(`INSERT INTO patients (name, nationalCode, createdAt) VALUES (?, ?, ?)`)
+      .run(name, nationalCode, createdAt);
 
   } catch (err) {
     console.error(err);
@@ -54,11 +54,27 @@ function createPatient(name, nationalCode) {
   }
 }
 
-function createCase(patientid, image) {
+function createCase(patientid, image, createdAt) {
   try {
     return db
-      .prepare(`INSERT INTO cases (patientId, image) VALUES (?, ?)`)
-      .run(patientid, image);
+      .prepare(`INSERT INTO cases (patientId, image, createdAt) VALUES (?, ?, ?)`)
+      .run(patientid, image, createdAt);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+function getStats(startOfDay) {
+  try {
+    const total = db
+      .prepare(`SELECT count(*) AS total FROM patients`)
+      .get().total;
+    const todayTotal = db
+      .prepare(`SELECT count(*) AS todayTotal FROM patients WHERE createdAt >= ?`)
+      .get(startOfDay).todayTotal;
+
+    return { total, todayTotal };
   } catch (err) {
     console.error(err);
     throw err;
@@ -71,7 +87,10 @@ function initDb() {
     CREATE TABLE IF NOT EXISTS patients (
 	    id INTEGER PRIMARY KEY,
 	    name TEXT NOT NULL,
-	    nationalCode TEXT NOT NULL
+	    nationalCode TEXT NOT NULL,
+      phoneNumber TEXT,
+      createdAt TEXT NOT NULL,
+      lastEditedAt TEXT
     );`
   )
     .run();
@@ -82,6 +101,7 @@ function initDb() {
       id INTEGER PRIMARY KEY,
       image BLOB NOT NULL,
       patientId INTEGER NOT NULL,
+      createdAt TEXT NOT NULL,
       FOREIGN KEY(patientId) REFERENCES patients(id)
     );`
   )
@@ -90,8 +110,8 @@ function initDb() {
   // seed some patients data
   db.prepare(
     `
-    INSERT OR IGNORE INTO patients (id, name, nationalCode)
-    VALUES (1, 'patient1', '123'), (2, 'patient2', '345'), (3, 'patient3', '568');`
+    INSERT OR IGNORE INTO patients (id, name, nationalCode, phoneNumber, createdAt)
+    VALUES (1, 'patient1', '123', '0915635221', '1721952000000'), (2, 'patient2', '345', '0956635961', '1721952000000'), (3, 'patient3', '568', '0939635561', '1721952000000');`
   )
     .run();
 }
@@ -108,5 +128,6 @@ module.exports = {
   createCase,
   getPatientWithImages,
   close,
-  initDb
+  initDb,
+  getStats
 };

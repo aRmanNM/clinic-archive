@@ -14,23 +14,27 @@
     <!-- search -->
     <section id="search">
       <h1>جستجوی مراجعین</h1>
-      <div class="d-flex">
+      <div class="d-flex gap-1">
         <input class="form-control" id="search-input" type="text" placeholder="کد ملی" />
         <input class="btn btn-primary" type="submit" value="جستجو" onclick="searchPatient()" />
         <input class="btn btn-secondary" type="button" value="افزودن مراجع جدید" onclick="showForm()" />
       </div>
-      <p id="search-message"></p>
+      <p class="mt-3" id="search-message"></p>
       <table id="search-table" hidden class="table">
         <thead>
           <tr>
             <th scope="col">نام</th>
             <th scope="col">کد ملی</th>
+            <th scope="col">شماره تماس</th>
             <th scope="col">اقدامات</th>
           </tr>
         </thead>
         <tbody id="search-result">
         </tbody>
       </table>
+      <div class="footer p-3">
+        <span id="search-footer"></span>
+      </div>
     </section>
 
     <!-- form -->
@@ -40,6 +44,7 @@
       <input class="form-control" id="form-nationalcode" type="text" placeholder="کد ملی" />
       <input class="form-control" id="form-name" type="text" placeholder="نام" />
 
+      <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
       <input class="btn btn-primary" id="form-button" type="button" onclick="createOrUpdatePatient()" />
     </section>
 
@@ -56,12 +61,12 @@
         آپلود نسخه
       </button>
       <input type="file" id="patient-upload" style="display: none" onchange="uploadImage()" />
-      <button class="btn btn-primary" onclick="showCanvas()">ثبت نسخه جدید</button>
+      <button class="btn btn-primary"  onclick="document.location='canvas.html'">ثبت نسخه جدید</button>
     </section>
   </div>
 
   <!-- canvas -->
-  <section id="canvas">
+  <!-- <section id="canvas">
     <div id="canvas-top">
       <p id="canvas-patientid"></p>
       <select class="form-select w-auto" name="اندازه قلم" id="canvas-brush-size" onchange="changeBrushSize()">
@@ -72,13 +77,12 @@
       <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnFromCanvas()" />
       <input class="btn btn-success" type="button" value="ذخیره" onclick="saveCanvas()" />
       <input class="btn btn-danger" value="پاک کردن" onclick="clearCanvas()" />
-      <textarea id="canvas-log" cols="100" rows="2"></textarea>
     </div>
     <canvas id="canvas-case" style="border: 1px solid #000000"></canvas>
-  </section>
+  </section> -->
 
   <script src="script.js"></script>
-  <script src="fabric.min.js.js"></script>
+  <!-- <script src="fabric.min.js.js"></script> -->
 </body>
 
 </html>
