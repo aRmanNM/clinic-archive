@@ -162,6 +162,11 @@ function createOrUpdatePatient() {
 //   reader.readAsArrayBuffer(blob);
 // }
 
+function showNewCanvas() {
+  var patientId = document.getElementById("patient-id").innerText;
+  window.location = `canvas.html?patientId=${patientId}`;
+}
+
 // function showCanvas(id) {
 //   toggleSection("canvas");
 //   var patientid = document.getElementById("patient-id").innerText;
@@ -234,7 +239,15 @@ async function toggleSection(name) {
 document.addEventListener(
   "DOMContentLoaded",
   async function () {
-    await toggleSection("search");
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const patientId = searchParams.get('patientId');
+
+    if (patientId) {
+      showPatient(patientId);
+    } else {
+      await toggleSection("search");
+    }
   },
   false
 );

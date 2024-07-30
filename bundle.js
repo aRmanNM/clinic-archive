@@ -14903,7 +14903,7 @@ Please add \`${key}Action\` when creating your handler.`);
 }`);
       };
 
-      /// ****** SAVE TO DATABASE HERE, MAYBE
+      /// ****** SAVE TO DATABASE
 
       this.saveCanvas = () => {
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -14939,9 +14939,16 @@ Please add \`${key}Action\` when creating your handler.`);
         const s2 = new XMLSerializer();
         const svgString = s2.serializeToString(svg).replaceAll("&#10;      ", "").replaceAll(/((\s|")[0-9]*\.[0-9]{2})([0-9]*)(\b|"|\))/g, "$1");
         
-        window.sqlite.dbrepo?.createCase(1, svgString, Date.now());
+        // SAVE CANVAS TO DB
+        const searchParams = new URLSearchParams(window.location.search);
+        const patientId = searchParams.get('patientId');
+        window.sqlite.dbrepo?.createCase(patientId, svgString, Date.now());
 
-        return svgString;
+        // RESET CANVAS
+        app.resetDoc()
+
+        // RETURN
+        window.location = `index.html?patientId=${patientId}`;
       };
 
       this.copySvg = () => {
@@ -16478,7 +16485,9 @@ hr {
       onClick: app.redo
     }, "به جلو"), /* @__PURE__ */ React10.createElement("button", {
       onClick: app.resetDoc
-    }, "پاک کردن")));
+    }, "پاک کردن"), /* @__PURE__ */ React10.createElement("button", {
+      onClick: app.saveCanvas
+    }, "ذخیره")));
   }
 
   // src/hooks/useKeyboardShortcuts.ts
