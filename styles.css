@@ -12,3 +12,8 @@ html, body {
     color: black;
     text-align: center;
 }
+
+img {
+    border: 1px solid black;
+    margin: 10px;
+}

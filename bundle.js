@@ -14907,7 +14907,7 @@ Please add \`${key}Action\` when creating your handler.`);
         const searchParams = new URLSearchParams(window.location.search);
         const patientId = searchParams.get('patientId');
 
-        console.log("patientid: ", patientId);
+        // console.log("patientid: ", patientId);
 
         window.location = `index.html?patientId=${patientId}`;
       }

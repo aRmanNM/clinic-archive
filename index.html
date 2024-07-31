@@ -26,6 +26,8 @@
             <th scope="col">نام</th>
             <th scope="col">کد ملی</th>
             <th scope="col">شماره تماس</th>
+            <th scope="col">اولین مراجعه</th>
+            <th scope="col">آخرین مراجعه</th>
             <th scope="col">اقدامات</th>
           </tr>
         </thead>
@@ -51,17 +53,37 @@
     <!-- patient -->
     <section id="patient">
       <h1>صفحه مراجعه کننده</h1>
-      <p id="patient-id"></p>
-      <p id="patient-name"></p>
-      <p id="patient-nationalCode"></p>
-      <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
-      <hr />
-      <div id="patient-gallery"></div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">شناسه</th>
+            <th scope="col">نام</th>
+            <th scope="col">کد ملی</th>
+            <th scope="col">شماره تماس</th>
+            <th scope="col">اولین مراجعه</th>
+            <th scope="col">آخرین مراجعه</th>
+            <th scope="col">تعداد نسخه ها</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="patient-id"></td>
+            <td id="patient-name"></td>
+            <td id="patient-nationalCode"></td>
+            <td id="patient-phoneNumber"></td>
+            <td id="patient-createdAt"></td>
+            <td id="patient-lastCaseCreatedAt"></td>
+            <td id="patient-totalCase"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-secondary" onclick="returnToBase()">بازگشت</button>
       <button class="btn btn-info" onclick="document.getElementById('patient-upload').click()">
         آپلود نسخه
       </button>
       <input type="file" id="patient-upload" style="display: none" onchange="uploadImage()" />
       <button class="btn btn-primary"  onclick="showNewCanvas()">ثبت نسخه جدید</button>
+      <div id="patient-gallery"></div>
     </section>
   </div>
 

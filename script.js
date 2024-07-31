@@ -30,6 +30,8 @@ function searchPatient() {
     let name = document.createElement("td");
     let nationalCode = document.createElement("td");
     let phoneNumber = document.createElement("td");
+    let createdAt = document.createElement("td");
+    let lastVisitedAt = document.createElement("td");
     let actions = document.createElement("td");
 
     show.textContent = "مشاهده صفحه بیمار";
@@ -49,6 +51,8 @@ function searchPatient() {
     name.textContent = element.name;
     nationalCode.textContent = element.nationalCode;
     phoneNumber.textContent = element.phoneNumber;
+    createdAt.textContent = timestampToPersianDateTime(element.createdAt);
+    lastVisitedAt.textContent = timestampToPersianDateTime(element.lastVisitedAt);
 
     actions.appendChild(show);
     actions.appendChild(edit);
@@ -56,6 +60,8 @@ function searchPatient() {
     row.appendChild(name);
     row.appendChild(nationalCode);
     row.appendChild(phoneNumber);
+    row.appendChild(createdAt);
+    row.appendChild(lastVisitedAt);
     row.appendChild(actions);
 
     resultList.appendChild(row);
@@ -68,18 +74,28 @@ function showPatient(id) {
   let patientId = document.getElementById("patient-id");
   let patientNationalCode = document.getElementById("patient-nationalCode");
   let patientName = document.getElementById("patient-name");
+  let patientPhoneNumber = document.getElementById("patient-phoneNumber");
+  let patientCreatedAt = document.getElementById("patient-createdAt");
+  let patientLastCaseCreatedAt = document.getElementById("patient-lastCaseCreatedAt");
+  let patientTotalCase = document.getElementById("patient-totalCase");
+
   let patientGallery = document.getElementById("patient-gallery");
+
   patientGallery.replaceChildren();
 
   const patient = window.sqlite.dbrepo?.getPatientWithImages(id);
   // console.log(patient);
 
+  let counter = 0;
   patient.forEach((element) => {
     if (element.image) {
+      counter += 1;
       let imageElement = document.createElement("img");
       imageElement.width = 200;
       imageElement.height = 200;
-      const blob = new Blob([element.image], { type: "image/png" });
+      // const blob = new Blob([element.image], { type: "image/png" });
+      const blob = new Blob([element.image], { type: "image/svg+xml" });
+      // console.log(blob);
       const blobUrl = URL.createObjectURL(blob);
       imageElement.src = blobUrl;
 
@@ -87,9 +103,13 @@ function showPatient(id) {
     }
   });
 
-  patientId.innerText = patient[0].id;
-  patientNationalCode.innerText = patient[0].nationalCode;
-  patientName.innerText = patient[0].name;
+  patientId.textContent = patient[0].id;
+  patientNationalCode.textContent = patient[0].nationalCode;
+  patientName.textContent = patient[0].name;
+  patientPhoneNumber.textContent = patient[0].phoneNumber;
+  patientCreatedAt.textContent = timestampToPersianDateTime(patient[0].createdAt);
+  patientLastCaseCreatedAt.textContent = timestampToPersianDateTime(patient[0].lastVisitedAt);
+  patientTotalCase.textContent = counter;
 }
 
 function showForm(id) {
@@ -163,7 +183,7 @@ function createOrUpdatePatient() {
 // }
 
 function showNewCanvas() {
-  var patientId = document.getElementById("patient-id").innerText;
+  let patientId = document.getElementById("patient-id").textContent;
   window.location = `canvas.html?patientId=${patientId}`;
 }
 
@@ -218,11 +238,19 @@ function initSection(name) {
     let footer = document.getElementById('search-footer');
 
     var start = new Date();
-    start.setUTCHours(0,0,0,0);
+    start.setUTCHours(0, 0, 0, 0);
 
     const res = window.sqlite.dbrepo?.getStats(start.getTime());
     footer.innerText = `تعداد کل مراجعین: ${res.total} - تعداد مراجعین امروز: ${res.todayTotal}`;
   }
+}
+
+function timestampToPersianDateTime(timestamp) {
+  if (!timestamp) return;
+  const date = new Date(+timestamp).toLocaleDateString("fa-IR");
+  const time = new Date(+timestamp).toLocaleTimeString("fa-IR");
+
+  return `${date}-${time}`;
 }
 
 async function toggleSection(name) {

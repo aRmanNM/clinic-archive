@@ -24,7 +24,7 @@ function getPatient(id) {
 
 function getPatientWithImages(id) {
   try {
-    return db.prepare(`SELECT p.id, p.name, p.nationalCode, c.image FROM patients AS p LEFT JOIN cases AS c ON p.id = c.patientId WHERE p.id = ?`).all(id);
+    return db.prepare(`SELECT p.id, p.name, p.nationalCode, p.phoneNumber, p.createdAt, p.lastVisitedAt, c.image FROM patients AS p LEFT JOIN cases AS c ON p.id = c.patientId WHERE p.id = ?`).all(id);
   } catch (err) {
     console.error(err);
     throw err;
@@ -54,11 +54,15 @@ function createPatient(name, nationalCode, createdAt) {
   }
 }
 
-function createCase(patientid, image, createdAt) {
+function createCase(patientId, image, createdAt) {
   try {
-    return db
+    db
       .prepare(`INSERT INTO cases (patientId, image, createdAt) VALUES (?, ?, ?)`)
-      .run(patientid, image, createdAt);
+      .run(patientId, image, createdAt);
+
+    db
+      .prepare(`UPDATE patients SET lastVisitedAt = ? WHERE id = ?`)
+      .run(createdAt, patientId);
   } catch (err) {
     console.error(err);
     throw err;
@@ -90,7 +94,8 @@ function initDb() {
 	    nationalCode TEXT NOT NULL,
       phoneNumber TEXT,
       createdAt TEXT NOT NULL,
-      lastEditedAt TEXT
+      lastEditedAt TEXT,
+      lastVisitedAt TEXT
     );`
   )
     .run();
