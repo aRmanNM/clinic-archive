@@ -14903,6 +14903,15 @@ Please add \`${key}Action\` when creating your handler.`);
 }`);
       };
 
+      this.returnToPatient = () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const patientId = searchParams.get('patientId');
+
+        console.log("patientid: ", patientId);
+
+        window.location = `index.html?patientId=${patientId}`;
+      }
+
       /// ****** SAVE TO DATABASE
 
       this.saveCanvas = () => {
@@ -14939,16 +14948,13 @@ Please add \`${key}Action\` when creating your handler.`);
         const s2 = new XMLSerializer();
         const svgString = s2.serializeToString(svg).replaceAll("&#10;      ", "").replaceAll(/((\s|")[0-9]*\.[0-9]{2})([0-9]*)(\b|"|\))/g, "$1");
         
-        // SAVE CANVAS TO DB
         const searchParams = new URLSearchParams(window.location.search);
         const patientId = searchParams.get('patientId');
+
         window.sqlite.dbrepo?.createCase(patientId, svgString, Date.now());
 
-        // RESET CANVAS
         app.resetDoc()
-
-        // RETURN
-        window.location = `index.html?patientId=${patientId}`;
+        app.returnToPatient(patientId);
       };
 
       this.copySvg = () => {
@@ -16487,7 +16493,9 @@ hr {
       onClick: app.resetDoc
     }, "پاک کردن"), /* @__PURE__ */ React10.createElement("button", {
       onClick: app.saveCanvas
-    }, "ذخیره")));
+    }, "ذخیره"), /* @__PURE__ */ React10.createElement("button", {
+      onClick: app.returnToPatient
+    }, "بازگشت")));
   }
 
   // src/hooks/useKeyboardShortcuts.ts
