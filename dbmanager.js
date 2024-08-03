@@ -24,29 +24,38 @@ function getPatient(id) {
 
 function getPatientWithImages(id) {
   try {
-    return db.prepare(`SELECT p.id, p.name, p.nationalCode, p.phoneNumber, p.createdAt, p.lastVisitedAt, c.image FROM patients AS p LEFT JOIN cases AS c ON p.id = c.patientId WHERE p.id = ?`).all(id);
+    return db.prepare(`SELECT p.id, p.name, p.nationalCode, p.phoneNumber, p.createdAt, p.lastVisitedAt, c.id as caseId, c.image, c.createdAt as caseCreatedAt FROM patients AS p LEFT JOIN cases AS c ON p.id = c.patientId WHERE p.id = ? ORDER BY caseCreatedAt DESC`).all(id);
   } catch (err) {
     console.error(err);
     throw err;
   }
 }
 
-function updatePatient(id, name, nationalCode, lastEditedAt) {
+function getPatientCase(id) {
   try {
-    return db
-      .prepare(`UPDATE patients SET name = ?, nationalCode = ?, lastEditedAt = ? WHERE id = ?`)
-      .run(name, nationalCode, lastEditedAt, id);
+    return db.prepare(`SELECT * FROM cases WHERE id = ?`).get(id);
   } catch (err) {
     console.error(err);
     throw err;
   }
 }
 
-function createPatient(name, nationalCode, createdAt) {
+function updatePatient(id, name, nationalCode, phoneNumber, lastEditedAt) {
   try {
     return db
-      .prepare(`INSERT INTO patients (name, nationalCode, createdAt) VALUES (?, ?, ?)`)
-      .run(name, nationalCode, createdAt);
+      .prepare(`UPDATE patients SET name = ?, nationalCode = ?, phoneNumber = ?, lastEditedAt = ? WHERE id = ?`)
+      .run(name, nationalCode, phoneNumber, lastEditedAt, id);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+function createPatient(name, nationalCode, phoneNumber, createdAt) {
+  try {
+    return db
+      .prepare(`INSERT INTO patients (name, nationalCode, phoneNumber, createdAt) VALUES (?, ?, ?)`)
+      .run(name, nationalCode, phoneNumber, createdAt);
 
   } catch (err) {
     console.error(err);
@@ -63,6 +72,19 @@ function createCase(patientId, image, createdAt) {
     db
       .prepare(`UPDATE patients SET lastVisitedAt = ? WHERE id = ?`)
       .run(createdAt, patientId);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+function updateCase(caseId, image) {
+  try {
+    db
+      .prepare(`UPDATE cases SET image = ? WHERE id = ?`)
+      .run(image, caseId);
+
+    // TODO: update patient
   } catch (err) {
     console.error(err);
     throw err;
@@ -129,8 +151,10 @@ module.exports = {
   searchPatient,
   getPatient,
   updatePatient,
+  updateCase,
   createPatient,
   createCase,
+  getPatientCase,
   getPatientWithImages,
   close,
   initDb,

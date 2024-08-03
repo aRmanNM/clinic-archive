@@ -91,6 +91,8 @@ function showPatient(id) {
     if (element.image) {
       counter += 1;
       let imageElement = document.createElement("img");
+      let figure = document.createElement('figure');
+      let figureCaption = document.createElement('figcaption');
       imageElement.width = 200;
       imageElement.height = 200;
       // const blob = new Blob([element.image], { type: "image/png" });
@@ -99,7 +101,19 @@ function showPatient(id) {
       const blobUrl = URL.createObjectURL(blob);
       imageElement.src = blobUrl;
 
-      patientGallery.appendChild(imageElement);
+      imageElement.onclick = () => {
+        window.location = `canvas.html?patientId=${id}&caseId=${element.caseId}`;
+      };
+
+      figureCaption.innerText = `${timestampToPersianDateTime(element.caseCreatedAt)}`;
+
+      if (counter == 1 && patient.length > 1) {
+        figureCaption.innerText += ' (آخرین)';
+      }
+
+      figure.appendChild(imageElement);
+      figure.appendChild(figureCaption);
+      patientGallery.appendChild(figure);
     }
   });
 
@@ -117,13 +131,15 @@ function showForm(id) {
 
   let button = document.getElementById("form-button");
   let idInput = document.getElementById("form-id");
-  let nationalCodeInput = document.getElementById("form-nationalcode");
   let nameInput = document.getElementById("form-name");
+  let nationalCodeInput = document.getElementById("form-nationalcode");
+  let phoneNumberInput = document.getElementById("form-phoneNumber");
 
   // clear input state
   idInput.value = "";
   nationalCodeInput.value = "";
   nameInput.value = "";
+  phoneNumberInput.value = "";
 
   if (id) {
     const patient = window.sqlite.dbrepo?.getPatient(id);
@@ -131,6 +147,7 @@ function showForm(id) {
     idInput.value = patient.id;
     nationalCodeInput.value = patient.nationalCode;
     nameInput.value = patient.name;
+    phoneNumberInput.value = patient.phoneNumber;
   } else {
     button.value = "ساخت";
   }
@@ -154,11 +171,12 @@ function createOrUpdatePatient() {
   let id = document.getElementById("form-id").value;
   let nationalCode = document.getElementById("form-nationalcode").value;
   let name = document.getElementById("form-name").value;
+  let phoneNumber = document.getElementById("form-phoneNumber").value;
 
   if (id) {
-    window.sqlite.dbrepo?.updatePatient(id, name, nationalCode);
+    window.sqlite.dbrepo?.updatePatient(id, name, nationalCode, phoneNumber, Date.now());
   } else {
-    window.sqlite.dbrepo?.createPatient(name, nationalCode, Date.now());
+    window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now());
   }
 
   toggleSection("search");
@@ -182,7 +200,7 @@ function createOrUpdatePatient() {
 //   reader.readAsArrayBuffer(blob);
 // }
 
-function showNewCanvas() {
+function showCanvasNext() {
   let patientId = document.getElementById("patient-id").textContent;
   window.location = `canvas.html?patientId=${patientId}`;
 }

@@ -6,15 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>نرم افزار ثبت نسخه تصویری - صفحه اصلی</title>
   <link rel="stylesheet" href="bootstrap.rtl.min.css" />
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="fonts.css">
 </head>
 
 <body id="body">
-  <div class="container text-center">
+  <div class="container text-center h-100">
     <!-- search -->
     <section id="search">
-      <h1>جستجوی مراجعین</h1>
-      <div class="d-flex gap-1">
+      <h1 class="p-5">جستجوی مراجعین</h1>
+      <div class="d-flex gap-1 p-2">
         <input class="form-control" id="search-input" type="text" placeholder="کد ملی" />
         <input class="btn btn-primary" type="submit" value="جستجو" onclick="searchPatient()" />
         <input class="btn btn-secondary" type="button" value="افزودن مراجع جدید" onclick="showForm()" />
@@ -41,18 +42,21 @@
 
     <!-- form -->
     <section id="form">
-      <h1>تعریف/ویرایش مراجعین</h1>
+      <!-- <h1>تعریف/ویرایش مراجعین</h1> -->
       <input class="form-control" id="form-id" disabled type="text" placeholder="شناسه" />
-      <input class="form-control" id="form-nationalcode" type="text" placeholder="کد ملی" />
       <input class="form-control" id="form-name" type="text" placeholder="نام" />
+      <input class="form-control" id="form-nationalcode" type="text" placeholder="کد ملی" />
+      <input class="form-control" id="form-phoneNumber" type="text" placeholder="شماره تماس" />
 
-      <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
-      <input class="btn btn-primary" id="form-button" type="button" onclick="createOrUpdatePatient()" />
+      <div>
+        <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
+        <input class="btn btn-primary" id="form-button" type="button" onclick="createOrUpdatePatient()" />
+      </div>
     </section>
 
     <!-- patient -->
     <section id="patient">
-      <h1>صفحه مراجعه کننده</h1>
+      <!-- <h1>صفحه مراجعه کننده</h1> -->
       <table class="table">
         <thead>
           <tr>
@@ -82,7 +86,7 @@
         آپلود نسخه
       </button>
       <input type="file" id="patient-upload" style="display: none" onchange="uploadImage()" />
-      <button class="btn btn-primary"  onclick="showNewCanvas()">ثبت نسخه جدید</button>
+      <button class="btn btn-primary"  onclick="showCanvasNext()">ثبت نسخه جدید</button>
       <div id="patient-gallery"></div>
     </section>
   </div>
