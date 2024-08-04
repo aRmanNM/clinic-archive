@@ -54,7 +54,7 @@ function updatePatient(id, name, nationalCode, phoneNumber, lastEditedAt) {
 function createPatient(name, nationalCode, phoneNumber, createdAt) {
   try {
     return db
-      .prepare(`INSERT INTO patients (name, nationalCode, phoneNumber, createdAt) VALUES (?, ?, ?)`)
+      .prepare(`INSERT INTO patients (name, nationalCode, phoneNumber, createdAt) VALUES (?, ?, ?, ?)`)
       .run(name, nationalCode, phoneNumber, createdAt);
 
   } catch (err) {

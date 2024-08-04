@@ -11510,39 +11510,7 @@ Please add \`${key}Action\` when creating your handler.`);
     foreground: "rgb(51, 51, 51)"
   };
   var tlcss = css`
-  @font-face {
-    font-family: 'Recursive';
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: url(https://fonts.gstatic.com/s/recursive/v23/8vI-7wMr0mhh-RQChyHEH06TlXhq_gukbYrFMk1QuAIcyEwG_X-dpEfaE5YaERmK-CImKsvxvU-MXGX2fSqasNfUlTGZnI14ZeY.woff2)
-      format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-      U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
-  @font-face {
-    font-family: 'Recursive';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url(https://fonts.gstatic.com/s/recursive/v23/8vI-7wMr0mhh-RQChyHEH06TlXhq_gukbYrFMk1QuAIcyEwG_X-dpEfaE5YaERmK-CImKsvxvU-MXGX2fSqasNfUlTGZnI14ZeY.woff2)
-      format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-      U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
-  @font-face {
-    font-family: 'Recursive Mono';
-    font-style: normal;
-    font-weight: 420;
-    font-display: swap;
-    src: url(https://fonts.gstatic.com/s/recursive/v23/8vI-7wMr0mhh-RQChyHEH06TlXhq_gukbYrFMk1QuAIcyEwG_X-dpEfaE5YaERmK-CImqvTxvU-MXGX2fSqasNfUlTGZnI14ZeY.woff2)
-      format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-      U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
+  
   .tl-container {
     --tl-zoom: 1;
     --tl-scale: calc(1 / var(--tl-zoom));
@@ -13435,7 +13403,7 @@ Please add \`${key}Action\` when creating your handler.`);
         maxX: Infinity,
         maxY: Infinity,
         width: Infinity,
-        height: Infinity
+        height: Infinity,
       },
       inputs: new Inputs()
     }));
@@ -14427,7 +14395,8 @@ Please add \`${key}Action\` when creating your handler.`);
             img.id = "previous-image";
             img.style.width = "100%";
             img.style.height = "100%";
-            img.style.padding = "40px";
+            img.style.position = "absolute";
+            // img.style.padding = "40px";
 
             canvas.appendChild(img);
 
@@ -15100,15 +15069,13 @@ Please add \`${key}Action\` when creating your handler.`);
 
         if (caseId) {
           // embed background image to svg if there is something
-          const previouseImage = document.getElementById('previous-image');
-          const image = this.makeSVG('image', {
-            src:previouseImage.src,
-            width: bounds.width + padding * 2,
-            height: bounds.height + padding * 2,
-            x: bounds.minX - padding,
-            y: bounds.minY - padding });
+          const patientCase = window.sqlite.dbrepo?.getPatientCase(caseId);
+          const parser = new DOMParser();
+          const previousSvg = parser.parseFromString(patientCase.image, 'image/svg+xml').documentElement;
 
-          svg.appendChild(image);           
+          while (previousSvg.childNodes.length > 0) {
+            svg.appendChild(previousSvg.childNodes[0]);
+          }
         }
 
         const s2 = new XMLSerializer();
@@ -15271,10 +15238,10 @@ Please add \`${key}Action\` when creating your handler.`);
       onPointerDown,
       onPointerMove,
       onPointerUp,
-      onPinch,
-      onPinchStart,
-      onPinchEnd,
-      onPan
+      // onPinch,
+      // onPinchStart,
+      // onPinchEnd,
+      // onPan
     }));
   }
 
@@ -16061,7 +16028,7 @@ Please add \`${key}Action\` when creating your handler.`);
 }
 
 ._numberInput_1bglo_60 {
-  font-family: inherit;
+  font-family: 'Yekan';
   font-size: 12px;
   border: none;
   width: 40px;
@@ -16202,7 +16169,7 @@ hr {
 ._rowButton_1l8m7_46 {
   cursor: pointer;
   flex-grow: 2;
-  font-family: 'Recursive', sans-serif;
+  font-family: 'Yekan';
   border: none;
   background-color: transparent;
   border: 2px solid transparent;
@@ -16528,14 +16495,14 @@ hr {
 
 ._container_tfbz8_1 a,
 ._container_tfbz8_1 button {
-  border: none;
+  border: 1px solid lightgrey;
   height: 40px;
-  width: 40px;
+  width: 65px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: black;
-  font-family: 'Recursive', sans-serif;
+  font-family: 'Yekan';
   user-select: none;
   background-color: rgba(255, 255, 255, 1);
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 1),
@@ -16543,7 +16510,7 @@ hr {
 }
 
 ._container_tfbz8_1 button {
-  padding: 16px 40px;
+  margin-right: 5px;
 }
 
 ._container_tfbz8_1 a:hover,
@@ -16559,6 +16526,12 @@ hr {
 
 ._left_tfbz8_40 {
   left: 0px;
+  
+}
+
+._left_tfbz8_40 button {
+  left: 0px;
+  border : none;
 }
 
 ._right_tfbz8_44 {

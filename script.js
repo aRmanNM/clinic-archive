@@ -266,7 +266,7 @@ function initSection(name) {
 function timestampToPersianDateTime(timestamp) {
   if (!timestamp) return;
   const date = new Date(+timestamp).toLocaleDateString("fa-IR");
-  const time = new Date(+timestamp).toLocaleTimeString("fa-IR");
+  const time = new Date(+timestamp).toLocaleTimeString("fa-IR", {hour: '2-digit', minute:'2-digit'});
 
   return `${date}-${time}`;
 }

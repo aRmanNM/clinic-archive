@@ -2,11 +2,10 @@ html,
 body {
     margin: 0;
     height: 100%;
-    /* background-image: url("profile.png");
+    background-image: url("profile.svg");
     background-size: cover;
     background-blend-mode: darken;
-    background-color: #cccccc; */
-
+    background-color: #cccccc;
     font-family: Vazirmatn UI FD;
 }
 
