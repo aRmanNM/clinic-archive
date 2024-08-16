@@ -27,6 +27,7 @@
             <th scope="col">نام</th>
             <th scope="col">کد ملی</th>
             <th scope="col">شماره تماس</th>
+            <th scope="col">نوع بیمه</th>
             <th scope="col">اولین مراجعه</th>
             <th scope="col">آخرین مراجعه</th>
             <th scope="col">اقدامات</th>
@@ -47,7 +48,12 @@
       <input class="form-control" id="form-name" type="text" placeholder="نام" />
       <input class="form-control" id="form-nationalcode" type="text" placeholder="کد ملی" />
       <input class="form-control" id="form-phoneNumber" type="text" placeholder="شماره تماس" />
-
+      <select class="form-select" name="نوع بیمه" id="form-insurance">
+        <option value="0">بدون بیمه</option>
+        <option value="1">تامین اجتماعی</option>
+        <option value="2">خدمات درمانی</option>
+        <option value="3">نیروهای مسلح</option>
+      </select>
       <div>
         <input class="btn btn-secondary" type="button" value="بازگشت" onclick="returnToBase()" />
         <input class="btn btn-primary" id="form-button" type="button" onclick="createOrUpdatePatient()" />
@@ -64,6 +70,7 @@
             <th scope="col">نام</th>
             <th scope="col">کد ملی</th>
             <th scope="col">شماره تماس</th>
+            <th scope="col">نوع بیمه</th>
             <th scope="col">اولین مراجعه</th>
             <th scope="col">آخرین مراجعه</th>
             <th scope="col">تعداد نسخه ها</th>
@@ -75,6 +82,7 @@
             <td id="patient-name"></td>
             <td id="patient-nationalCode"></td>
             <td id="patient-phoneNumber"></td>
+            <td id="patient-insurance"></td>
             <td id="patient-createdAt"></td>
             <td id="patient-lastCaseCreatedAt"></td>
             <td id="patient-totalCase"></td>
@@ -86,7 +94,7 @@
         آپلود نسخه
       </button>
       <input type="file" id="patient-upload" style="display: none" onchange="uploadImage()" />
-      <button class="btn btn-primary"  onclick="showCanvasNext()">ثبت نسخه جدید</button>
+      <button class="btn btn-primary" onclick="showCanvasNext()">ثبت نسخه جدید</button>
       <div id="patient-gallery"></div>
     </section>
   </div>

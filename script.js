@@ -30,6 +30,7 @@ function searchPatient() {
     let name = document.createElement("td");
     let nationalCode = document.createElement("td");
     let phoneNumber = document.createElement("td");
+    let insurance = document.createElement("td");
     let createdAt = document.createElement("td");
     let lastVisitedAt = document.createElement("td");
     let actions = document.createElement("td");
@@ -51,6 +52,7 @@ function searchPatient() {
     name.textContent = element.name;
     nationalCode.textContent = element.nationalCode;
     phoneNumber.textContent = element.phoneNumber;
+    insurance.textContent = mapInsuranceIdToInsuranceName(element.insuranceId);
     createdAt.textContent = timestampToPersianDateTime(element.createdAt);
     lastVisitedAt.textContent = timestampToPersianDateTime(element.lastVisitedAt);
 
@@ -60,12 +62,28 @@ function searchPatient() {
     row.appendChild(name);
     row.appendChild(nationalCode);
     row.appendChild(phoneNumber);
+    row.appendChild(insurance);
     row.appendChild(createdAt);
     row.appendChild(lastVisitedAt);
     row.appendChild(actions);
 
     resultList.appendChild(row);
   });
+}
+
+function mapInsuranceIdToInsuranceName(insuranceId) {
+  switch (insuranceId) {
+    case 0:
+      return 'بدون بیمه';
+    case 1:
+      return 'تامین اجتماعی';
+    case 2:
+      return 'خدمات درمانی';
+    case 3:
+      return 'نیروهای مسلح';
+    default:
+      break;
+  }
 }
 
 function showPatient(id) {
@@ -75,6 +93,7 @@ function showPatient(id) {
   let patientNationalCode = document.getElementById("patient-nationalCode");
   let patientName = document.getElementById("patient-name");
   let patientPhoneNumber = document.getElementById("patient-phoneNumber");
+  let patientInsurance = document.getElementById("patient-insurance");
   let patientCreatedAt = document.getElementById("patient-createdAt");
   let patientLastCaseCreatedAt = document.getElementById("patient-lastCaseCreatedAt");
   let patientTotalCase = document.getElementById("patient-totalCase");
@@ -121,6 +140,7 @@ function showPatient(id) {
   patientNationalCode.textContent = patient[0].nationalCode;
   patientName.textContent = patient[0].name;
   patientPhoneNumber.textContent = patient[0].phoneNumber;
+  patientInsurance.textContent = mapInsuranceIdToInsuranceName(patient[0].insuranceId);
   patientCreatedAt.textContent = timestampToPersianDateTime(patient[0].createdAt);
   patientLastCaseCreatedAt.textContent = timestampToPersianDateTime(patient[0].lastVisitedAt);
   patientTotalCase.textContent = counter;
@@ -134,12 +154,14 @@ function showForm(id) {
   let nameInput = document.getElementById("form-name");
   let nationalCodeInput = document.getElementById("form-nationalcode");
   let phoneNumberInput = document.getElementById("form-phoneNumber");
+  let insuranceInput = document.getElementById("form-insurance");
 
   // clear input state
   idInput.value = "";
   nationalCodeInput.value = "";
   nameInput.value = "";
   phoneNumberInput.value = "";
+  insuranceInput.value = 0;
 
   if (id) {
     const patient = window.sqlite.dbrepo?.getPatient(id);
@@ -148,6 +170,7 @@ function showForm(id) {
     nationalCodeInput.value = patient.nationalCode;
     nameInput.value = patient.name;
     phoneNumberInput.value = patient.phoneNumber;
+    insuranceInput.value = patient.insuranceId;
   } else {
     button.value = "ساخت";
   }
@@ -172,11 +195,12 @@ function createOrUpdatePatient() {
   let nationalCode = document.getElementById("form-nationalcode").value;
   let name = document.getElementById("form-name").value;
   let phoneNumber = document.getElementById("form-phoneNumber").value;
+  let insuranceId = document.getElementById("form-insurance").value;
 
   if (id) {
-    window.sqlite.dbrepo?.updatePatient(id, name, nationalCode, phoneNumber, Date.now());
+    window.sqlite.dbrepo?.updatePatient(id, name, nationalCode, phoneNumber, Date.now(), insuranceId);
   } else {
-    window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now());
+    window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now(), insuranceId);
   }
 
   toggleSection("search");
