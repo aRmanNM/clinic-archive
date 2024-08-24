@@ -3,6 +3,7 @@ const dbmgr = require("./db");
 const db = dbmgr.db;
 
 function searchPatient(query) {
+  query = toEnDigit(query);
   try {
     return db
       .prepare(`SELECT * FROM patients WHERE nationalCode LIKE '%${query}%' OR name LIKE '%${query}%'`)
@@ -41,6 +42,9 @@ function getPatientCase(id) {
 }
 
 function updatePatient(id, name, nationalCode, phoneNumber, lastEditedAt, insuranceId) {
+  name = toEnDigit(name);
+  nationalCode = toEnDigit(nationalCode);
+  phoneNumber = toEnDigit(phoneNumber);
   try {
     return db
       .prepare(`UPDATE patients SET name = ?, nationalCode = ?, phoneNumber = ?, lastEditedAt = ?, insuranceId = ? WHERE id = ?`)
@@ -52,6 +56,9 @@ function updatePatient(id, name, nationalCode, phoneNumber, lastEditedAt, insura
 }
 
 function createPatient(name, nationalCode, phoneNumber, createdAt, insuranceId) {
+  name = toEnDigit(name);
+  nationalCode = toEnDigit(nationalCode);
+  phoneNumber = toEnDigit(phoneNumber);
   try {
     return db
       .prepare(`INSERT INTO patients (name, nationalCode, phoneNumber, createdAt, insuranceId) VALUES (?, ?, ?, ?, ?)`)
@@ -146,6 +153,12 @@ function initDb() {
 
 function close() {
   db.close();
+}
+
+function toEnDigit(s) {
+  return s.replace(/[\u0660-\u0669\u06f0-\u06f9]/g,
+      function(a) { return a.charCodeAt(0) & 0xf }
+  )
 }
 
 module.exports = {
