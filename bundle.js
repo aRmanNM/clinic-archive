@@ -11556,6 +11556,7 @@ Please add \`${key}Action\` when creating your handler.`);
 
   .tl-canvas {
     position: absolute;
+    border: 1px solid red;
     width: 100%;
     height: 100%;
     touch-action: none;
@@ -14379,33 +14380,17 @@ Please add \`${key}Action\` when creating your handler.`);
         const searchParams = new URLSearchParams(window.location.search);
         const caseId = searchParams.get('caseId');
 
-        if (Object.values(this.state.page.shapes).length === 0 || caseId) {
-          
-          if (caseId) {
-            const patientCase = window.sqlite.dbrepo?.getPatientCase(caseId);
-            
-            const blob = new Blob([patientCase.image], { type: "image/svg+xml" });
-            const blobUrl = URL.createObjectURL(blob);
+        if (caseId) {
+          const patientCase = window.sqlite.dbrepo?.getPatientCase(caseId);
 
-            let canvas = document.getElementById('canvas');
+          let canvas = document.getElementById('canvas');
 
-            let img = document.createElement('img');
-            img.src = blobUrl;
+          const parser = new DOMParser();
+          const previousSvg = parser.parseFromString(patientCase.image, 'image/svg+xml');
 
-            img.id = "previous-image";
-            img.style.width = "100%";
-            img.style.height = "100%";
-            img.style.position = "absolute";
-            // img.style.padding = "40px";
-
-            canvas.appendChild(img);
-
-            // canvas.style.backgroundImage = `url("${blobUrl}")`;
-            // canvas.style.backgroundSize = 'cover';
+          while (previousSvg.childNodes.length > 0) {
+            canvas.appendChild(previousSvg.childNodes[0]);
           }
-
-          this.addShape({ id: "sample", points: sample_default });
-          this.centerShape("sample");
         }
       };
       this.cleanup = (state) => {
@@ -14948,17 +14933,17 @@ Please add \`${key}Action\` when creating your handler.`);
         // Create a DOM parser to parse the SVG string
         const parser = new DOMParser();
         const doc = parser.parseFromString(svgString, "image/svg+xml");
-      
+
         // Extract the SVG element
         const svg = doc.documentElement;
-      
+
         // Extract shapes from the SVG element
         const shapes = [];
         const pathElements = svg.querySelectorAll('path');
-      
+
         pathElements.forEach(path => {
           const shape = {};
-      
+
           const id = path.getAttribute('id');
           if (id.startsWith('path_stroke_')) {
             shape.type = 'stroke';
@@ -14967,13 +14952,13 @@ Please add \`${key}Action\` when creating your handler.`);
           } else {
             return; // Skip if it doesn't match the expected IDs
           }
-      
+
           shape.id = id;
-      
+
           // Parse the d attribute to extract points
           const pathData = path.getAttribute('d');
           shape.points = this.parsePathData(pathData);
-      
+
           // Extract transform attribute if present
           const transform = path.getAttribute('transform');
           if (transform) {
@@ -14982,23 +14967,23 @@ Please add \`${key}Action\` when creating your handler.`);
               shape.point = [parseFloat(position[1]), parseFloat(position[2])];
             }
           }
-      
+
           shapes.push(shape);
         });
-      
+
         return shapes;
       }
-      
+
       // Function to parse the path data and extract points
       this.parsePathData = (d) => {
         const commands = d.match(/[a-z][^a-z]*/ig);
         const points = [];
         let currentPoint = [0, 0];
-      
+
         commands.forEach(command => {
           const type = command[0];
           const values = command.slice(1).trim().split(/[\s,]+/).map(Number);
-      
+
           switch (type) {
             case 'M':
               currentPoint = [values[0], values[1]];
@@ -15024,7 +15009,7 @@ Please add \`${key}Action\` when creating your handler.`);
               break;
           }
         });
-      
+
         return points;
       }
 
@@ -15038,8 +15023,10 @@ Please add \`${key}Action\` when creating your handler.`);
 
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         const shapes = Object.values(this.state.page.shapes);
-        const bounds = Utils.getCommonBounds(shapes.map(draw.getBounds));
-        const padding = 40;
+
+        // const bounds = Utils.getCommonBounds(shapes.map(draw.getBounds));
+        // const padding = 40;
+        const padding = 0;
         shapes.forEach((shape) => {
           const fillElm = document.getElementById("path_" + shape.id);
           if (!fillElm)
@@ -15058,24 +15045,29 @@ Please add \`${key}Action\` when creating your handler.`);
             svg.appendChild(fillClone);
           }
         });
+
+        // svg.setAttribute("viewBox", [
+        //   bounds.minX - padding,
+        //   bounds.minY - padding,
+        //   bounds.width + padding * 2,
+        //   bounds.height + padding * 2
+        // ].join(" "));
+        // svg.setAttribute("width", String(bounds.width));
+        // svg.setAttribute("height", String(bounds.height));
+
+        let canvas = document.getElementById('canvas');
+
         svg.setAttribute("viewBox", [
-          bounds.minX - padding,
-          bounds.minY - padding,
-          bounds.width + padding * 2,
-          bounds.height + padding * 2
+          0,
+          0,
+          canvas.offsetWidth,
+          canvas.offsetHeight
         ].join(" "));
-        svg.setAttribute("width", String(bounds.width));
-        svg.setAttribute("height", String(bounds.height));
+        svg.setAttribute("width", canvas.offsetWidth);
+        svg.setAttribute("height", canvas.offsetHeight);
 
-        if (caseId) {
-          // embed background image to svg if there is something
-          const patientCase = window.sqlite.dbrepo?.getPatientCase(caseId);
-          const parser = new DOMParser();
-          const previousSvg = parser.parseFromString(patientCase.image, 'image/svg+xml').documentElement;
-
-          while (previousSvg.childNodes.length > 0) {
-            svg.appendChild(previousSvg.childNodes[0]);
-          }
+        while (canvas.childNodes.length > 0) {
+          svg.appendChild(canvas.childNodes[0]);
         }
 
         const s2 = new XMLSerializer();
@@ -15093,12 +15085,12 @@ Please add \`${key}Action\` when creating your handler.`);
 
       this.makeSVG = (tag, attrs) => {
         var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-        for (var k in attrs){
-            if(k=="xlink:href"){
-                el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
-            }else{
-                el.setAttribute(k, attrs[k]);
-            }
+        for (var k in attrs) {
+          if (k == "xlink:href") {
+            el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
+          } else {
+            el.setAttribute(k, attrs[k]);
+          }
         }
 
         return el;
@@ -16488,6 +16480,7 @@ hr {
   var css8 = `._container_tfbz8_1 {
   position: absolute;
   display: flex;
+  flex-direction: column;
   z-index: 20;
   width: fit-content;
   user-select: none;
@@ -16525,8 +16518,7 @@ hr {
 }
 
 ._left_tfbz8_40 {
-  left: 0px;
-  
+  left: 10px;
 }
 
 ._left_tfbz8_40 button {
@@ -16535,11 +16527,11 @@ hr {
 }
 
 ._right_tfbz8_44 {
-  right: 0px;
+  right: 5px;
 }
 
 ._top_tfbz8_48 {
-  top: 0px;
+  top: 10px;
 }
 
 ._center_tfbz8_52 {
@@ -16657,7 +16649,7 @@ hr {
     //   "data-active": tool === "drawing"
     // }, "Draw")),
     /* @__PURE__ */ React10.createElement("div", {
-      className: [panel_module_css_default.container, panel_module_css_default.bottom, panel_module_css_default.right].join(" ")
+      className: [panel_module_css_default.container, panel_module_css_default.top, panel_module_css_default.right].join(" ")
     }, /* @__PURE__ */ React10.createElement("button", {
       onClick: app.undo
     }, "به عقب"), /* @__PURE__ */ React10.createElement("button", {
