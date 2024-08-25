@@ -200,7 +200,13 @@ function createOrUpdatePatient() {
   if (id) {
     window.sqlite.dbrepo?.updatePatient(id, name, nationalCode, phoneNumber, Date.now(), insuranceId);
   } else {
-    window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now(), insuranceId);
+    const total = window.sqlite.dbrepo?.countPatients();
+    if (total > 10) {
+      window.dialog.showDialogMessage("امکان تعریف مراجع جدید در نسخه دمو وجود ندارد", "");
+    }
+    else {
+      window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now(), insuranceId);
+    }
   }
 
   toggleSection("search");
@@ -277,20 +283,20 @@ function returnToBase() {
 
 function initSection(name) {
   if (name == 'search') {
-    let footer = document.getElementById('search-footer');
+    // let footer = document.getElementById('search-footer');
 
-    var start = new Date();
-    start.setUTCHours(0, 0, 0, 0);
+    // var start = new Date();
+    // start.setUTCHours(0, 0, 0, 0);
 
-    const res = window.sqlite.dbrepo?.getStats(start.getTime());
-    footer.innerText = `تعداد کل مراجعین: ${res.total} - تعداد مراجعین امروز: ${res.todayTotal}`;
+    // const res = window.sqlite.dbrepo?.getStats(start.getTime());
+    // footer.innerText = `تعداد کل مراجعین: ${res.total} - تعداد مراجعین امروز: ${res.todayTotal}`;
   }
 }
 
 function timestampToPersianDateTime(timestamp) {
   if (!timestamp) return;
   const date = new Date(+timestamp).toLocaleDateString("fa-IR");
-  const time = new Date(+timestamp).toLocaleTimeString("fa-IR", {hour: '2-digit', minute:'2-digit'});
+  const time = new Date(+timestamp).toLocaleTimeString("fa-IR", { hour: '2-digit', minute: '2-digit' });
 
   return `${date}-${time}`;
 }

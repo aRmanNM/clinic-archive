@@ -1,10 +1,10 @@
 const { app, BrowserWindow } = require("electron/main");
 const db = require("./dbmanager")
 const path = require("node:path");
+const { dialog, ipcMain } = require("electron");
 
 let win;
 
-// avoid 
 if (require('electron-squirrel-startup')) app.quit();
 
 const createWindow = () => {
@@ -21,6 +21,10 @@ const createWindow = () => {
 
   win.menuBarVisible = false;
   win.loadFile("index.html");
+
+  ipcMain.on('dialog-message', (event, message, title) => {
+    dialog.showMessageBox({message: message, title: title});
+  });
 
   win.on('closed', () => {
     win = null;

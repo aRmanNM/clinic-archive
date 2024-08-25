@@ -70,6 +70,15 @@ function createPatient(name, nationalCode, phoneNumber, createdAt, insuranceId) 
   }
 }
 
+function countPatients() {
+  try {
+    return db.prepare(`SELECT count(*) as total FROM patients`).get().total;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
 function createCase(patientId, image, createdAt) {
   try {
     db
@@ -172,5 +181,6 @@ module.exports = {
   getPatientWithImages,
   close,
   initDb,
-  getStats
+  getStats,
+  countPatients
 };

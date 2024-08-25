@@ -11556,7 +11556,7 @@ Please add \`${key}Action\` when creating your handler.`);
 
   .tl-canvas {
     position: absolute;
-    border: 1px solid red;
+    // border: 1px solid red;
     width: 100%;
     height: 100%;
     touch-action: none;
