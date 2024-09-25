@@ -50,3 +50,26 @@ img {
     flex-direction: row;
     justify-content: center;
 }
+
+.patient-case-delete-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    color: transparent;
+    border: none;
+    /* border-radius: 50%; */
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    /* font-size: 12px;
+    line-height: 20px;
+    text-align: center; */
+    margin: 5px;
+}
+
+.patient-case-delete-button:hover {
+    /* background-color: red; */
+    color: red;
+    /* font-weight: bold; */
+}

@@ -23,7 +23,17 @@ const createWindow = () => {
   win.loadFile("index.html");
 
   ipcMain.on('dialog-message', (event, message, title) => {
-    dialog.showMessageBox({message: message, title: title});
+    dialog.showMessageBox({ message: message, title: title });
+  });
+
+  ipcMain.handle('dialog-confirm', async (event, message, title) => {
+    const result = await dialog.showMessageBox({
+      type: "question", message: message, title: title, 'buttons': [
+        'خیر',
+        'بله'
+      ]
+    });
+    return result.response;
   });
 
   win.on('closed', () => {

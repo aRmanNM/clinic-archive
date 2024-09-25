@@ -94,6 +94,17 @@ function createCase(patientId, image, createdAt) {
   }
 }
 
+function deleteCase(caseId) {
+  try {
+    db
+      .prepare(`DELETE FROM cases WHERE id = ?`)
+      .run(caseId);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
 function updateCase(caseId, image) {
   try {
     db
@@ -177,6 +188,7 @@ module.exports = {
   updateCase,
   createPatient,
   createCase,
+  deleteCase,
   getPatientCase,
   getPatientWithImages,
   close,

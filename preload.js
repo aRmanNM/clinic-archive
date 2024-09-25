@@ -6,7 +6,11 @@ contextBridge.exposeInMainWorld("sqlite", {
 });
 
 contextBridge.exposeInMainWorld('dialog', {
-  showDialogMessage(message, title) {
+  showMessageDialog(message, title) {
     ipcRenderer.send('dialog-message', message, title);
-  }
+  },
+
+  showConfirmDialog(message, title) {
+    return ipcRenderer.invoke('dialog-confirm', message, title);
+  },
 });

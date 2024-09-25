@@ -11609,6 +11609,7 @@ Please add \`${key}Action\` when creating your handler.`);
     padding: var(--tl-padding);
     overflow: hidden;
     contain: layout style size;
+    border: 1px solid blue;
   }
 
   .tl-counter-scaled {
@@ -15022,6 +15023,7 @@ Please add \`${key}Action\` when creating your handler.`);
         const caseId = searchParams.get('caseId');
 
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
         const shapes = Object.values(this.state.page.shapes);
 
         // const bounds = Utils.getCommonBounds(shapes.map(draw.getBounds));
@@ -15062,12 +15064,12 @@ Please add \`${key}Action\` when creating your handler.`);
           0,
           canvas.offsetWidth,
           canvas.offsetHeight
-        ].join(" "));
+        ]);
         svg.setAttribute("width", canvas.offsetWidth);
         svg.setAttribute("height", canvas.offsetHeight);
 
         while (canvas.childNodes.length > 0) {
-          svg.appendChild(canvas.childNodes[0]);
+          svg.prepend(canvas.childNodes[0]);
         }
 
         const s2 = new XMLSerializer();
@@ -15193,6 +15195,7 @@ Please add \`${key}Action\` when creating your handler.`);
   width: 100%;
   height: 100%;
   z-index: 1;
+  // border: 1px solid grey;
 }
 `;
   (function () {
@@ -16329,7 +16332,7 @@ hr {
       className: controls_module_css_default.inputs
     }, /* @__PURE__ */ React9.createElement(Slider2, {
       // name: "Size",
-      name: "اندازه قلم",
+      name: "Size",
       value: [style.size],
       min: 1,
       max: 15,
@@ -16480,7 +16483,7 @@ hr {
   var css8 = `._container_tfbz8_1 {
   position: absolute;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   z-index: 20;
   width: fit-content;
   user-select: none;
@@ -16489,21 +16492,23 @@ hr {
 ._container_tfbz8_1 a,
 ._container_tfbz8_1 button {
   border: 1px solid lightgrey;
-  height: 40px;
+  height: 30px;
   width: 65px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: black;
   font-family: 'Yekan';
+  font-size: small;
   user-select: none;
   background-color: rgba(255, 255, 255, 1);
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 1),
-    1px 1px 3px rgba(255, 255, 255, 1), 1px 1px 8px rgba(255, 255, 255, 1);
+  // text-shadow: 1px 1px 2px rgba(255, 255, 255, 1),
+  //   1px 1px 3px rgba(255, 255, 255, 1), 1px 1px 8px rgba(255, 255, 255, 1);
 }
 
 ._container_tfbz8_1 button {
-  margin-right: 5px;
+  margin-left: 5px;
+  margin-bottom: 5px;
 }
 
 ._container_tfbz8_1 a:hover,
@@ -16518,7 +16523,7 @@ hr {
 }
 
 ._left_tfbz8_40 {
-  left: 10px;
+  left: 5px;
 }
 
 ._left_tfbz8_40 button {
@@ -16531,7 +16536,7 @@ hr {
 }
 
 ._top_tfbz8_48 {
-  top: 10px;
+  top: 5px;
 }
 
 ._center_tfbz8_52 {
@@ -16549,6 +16554,18 @@ hr {
   color: black;
   text-decoration: none;
 }
+
+.reset-btn {
+  // border: 1px solid red;
+  color: red !important;
+  // background-color: red !important;
+}
+
+.save-btn {
+  color: white !important;
+  background-color: green !important;
+}
+
 `;
   (function () {
     if (!document.getElementById(digest7)) {
@@ -16649,18 +16666,13 @@ hr {
     //   "data-active": tool === "drawing"
     // }, "Draw")),
     /* @__PURE__ */ React10.createElement("div", {
-      className: [panel_module_css_default.container, panel_module_css_default.top, panel_module_css_default.right].join(" ")
-    }, /* @__PURE__ */ React10.createElement("button", {
-      onClick: app.undo
-    }, "به عقب"), /* @__PURE__ */ React10.createElement("button", {
-      onClick: app.redo
-    }, "به جلو"), /* @__PURE__ */ React10.createElement("button", {
-      onClick: app.resetDoc
-    }, "پاک کردن"), /* @__PURE__ */ React10.createElement("button", {
-      onClick: app.saveCanvas
-    }, "ذخیره"), /* @__PURE__ */ React10.createElement("button", {
-      onClick: app.returnToPatient
-    }, "بازگشت")));
+      className: [panel_module_css_default.container, panel_module_css_default.bottom, panel_module_css_default.right].join(" ")
+    },
+    // React10.createElement("button", { onClick: app.redo }, "به جلو"),
+    React10.createElement("button", { onClick: app.resetDoc, className: "reset-btn" }, "پاک کردن"),
+    React10.createElement("button", { onClick: app.undo }, "به عقب"),
+    React10.createElement("button", { onClick: app.saveCanvas, className: "save-btn" }, "ذخیره"),
+    React10.createElement("button", { onClick: app.returnToPatient }, "بازگشت")));
   }
 
   // src/hooks/useKeyboardShortcuts.ts

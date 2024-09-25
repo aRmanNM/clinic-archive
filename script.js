@@ -112,8 +112,12 @@ function showPatient(id) {
       let imageElement = document.createElement("img");
       let figure = document.createElement('figure');
       let figureCaption = document.createElement('figcaption');
-      imageElement.width = 200;
-      imageElement.height = 200;
+      let deleteButton = document.createElement('button');
+      deleteButton.className = "patient-case-delete-button";
+      deleteButton.textContent = "❌";
+
+      imageElement.width = 300;
+      imageElement.height = 150;
       // const blob = new Blob([element.image], { type: "image/png" });
       const blob = new Blob([element.image], { type: "image/svg+xml" });
       // console.log(blob);
@@ -124,7 +128,17 @@ function showPatient(id) {
         window.location = `canvas.html?patientId=${id}&caseId=${element.caseId}`;
       };
 
+      deleteButton.onclick = async () => {
+        const response = await window.dialog.showConfirmDialog("بعد از حذف امکان بازگردانی وجود نخواهد داشت. آیا اطمینان دارید؟", "");
+        if (response === 1) {
+          window.sqlite.dbrepo?.deleteCase(element.caseId);
+          showPatient(id);
+        }
+      }
+
       figureCaption.innerText = `${timestampToPersianDateTime(element.caseCreatedAt)}`;
+
+      figure.style.position = "relative";
 
       if (counter == 1 && patient.length > 1) {
         figureCaption.innerText += ' (آخرین)';
@@ -132,6 +146,7 @@ function showPatient(id) {
 
       figure.appendChild(imageElement);
       figure.appendChild(figureCaption);
+      figure.appendChild(deleteButton);
       patientGallery.appendChild(figure);
     }
   });
@@ -202,7 +217,7 @@ function createOrUpdatePatient() {
   } else {
     const total = window.sqlite.dbrepo?.countPatients();
     if (total > 10) {
-      window.dialog.showDialogMessage("امکان تعریف مراجع جدید در نسخه دمو وجود ندارد", "");
+      window.dialog.showMessageDialog("امکان تعریف مراجع جدید در نسخه دمو وجود ندارد", "");
     }
     else {
       window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now(), insuranceId);
