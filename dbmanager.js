@@ -163,12 +163,12 @@ function initDb() {
     .run();
 
   // seed some patients data
-  db.prepare(
-    `
-    INSERT OR IGNORE INTO patients (id, name, nationalCode, phoneNumber, createdAt, insuranceId)
-    VALUES (1, 'patient1', '123', '0915635221', '1721952000000', 0), (2, 'patient2', '345', '0956635961', '1721952000000', 1), (3, 'patient3', '568', '0939635561', '1721952000000', 2);`
-  )
-    .run();
+  // db.prepare(
+  //   `
+  //   INSERT OR IGNORE INTO patients (id, name, nationalCode, phoneNumber, createdAt, insuranceId)
+  //   VALUES (1, 'patient1', '123', '0915635221', '1721952000000', 0), (2, 'patient2', '345', '0956635961', '1721952000000', 1), (3, 'patient3', '568', '0939635561', '1721952000000', 2);`
+  // )
+  //   .run();
 }
 
 function close() {
@@ -177,7 +177,7 @@ function close() {
 
 function toEnDigit(s) {
   return s.replace(/[\u0660-\u0669\u06f0-\u06f9]/g,
-      function(a) { return a.charCodeAt(0) & 0xf }
+    function (a) { return a.charCodeAt(0) & 0xf }
   )
 }
 

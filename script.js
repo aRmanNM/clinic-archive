@@ -1,7 +1,7 @@
 // global variables
 var canvas;
 
-function searchPatient() {
+async function searchPatient() {
   let input = document.getElementById("search-input");
   let resultList = document.getElementById("search-result");
   let searchTable = document.getElementById("search-table");
@@ -9,7 +9,12 @@ function searchPatient() {
 
   let result;
   if (input.value) {
-    result = window.sqlite.dbrepo?.searchPatient(input.value);
+    var res = await window.application.checkApp();
+    if (Date.now() > res.value) {
+      result = [];
+    } else {
+      result = window.sqlite.dbrepo?.searchPatient(input.value);
+    }
   }
 
   if (!input.value || result.length === 0) {
@@ -86,7 +91,7 @@ function mapInsuranceIdToInsuranceName(insuranceId) {
   }
 }
 
-function showPatient(id) {
+async function showPatient(id) {
   toggleSection("patient");
 
   let patientId = document.getElementById("patient-id");
@@ -113,6 +118,7 @@ function showPatient(id) {
       let figure = document.createElement('figure');
       let figureCaption = document.createElement('figcaption');
       let deleteButton = document.createElement('button');
+
       deleteButton.className = "patient-case-delete-button";
       deleteButton.textContent = "❌";
 
@@ -205,7 +211,7 @@ function uploadImage() {
   reader.readAsArrayBuffer(imageUpload.files[0]);
 }
 
-function createOrUpdatePatient() {
+async function createOrUpdatePatient() {
   let id = document.getElementById("form-id").value;
   let nationalCode = document.getElementById("form-nationalcode").value;
   let name = document.getElementById("form-name").value;
@@ -215,13 +221,7 @@ function createOrUpdatePatient() {
   if (id) {
     window.sqlite.dbrepo?.updatePatient(id, name, nationalCode, phoneNumber, Date.now(), insuranceId);
   } else {
-    const total = window.sqlite.dbrepo?.countPatients();
-    if (total > 10) {
-      window.dialog.showMessageDialog("امکان تعریف مراجع جدید در نسخه دمو وجود ندارد", "");
-    }
-    else {
-      window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now(), insuranceId);
-    }
+    window.sqlite.dbrepo?.createPatient(name, nationalCode, phoneNumber, Date.now(), insuranceId);
   }
 
   toggleSection("search");
@@ -296,9 +296,31 @@ function returnToBase() {
   toggleSection("search");
 }
 
-function initSection(name) {
+async function initSection(name) {
   if (name == 'search') {
-    // let footer = document.getElementById('search-footer');
+    let footer = document.getElementById('search-footer');
+    let footerDiv = document.getElementById('footer');
+
+    var res = await window.application.checkApp();
+    var version = await window.application.getVersion();
+    footer.textContent = `نسخه: ${version} - `;
+
+    if (Date.now() < res.value) {
+      const diff = dateDiff(Date.now(), res.value);
+      if (diff < 4) {
+        footer.textContent += `اعتبار تا تاریخ: ${timestampToPersianDate(res.value)} (${diff} روز باقیمانده)`;
+        footerDiv.style.backgroundColor = "yellow";
+        footer.style.color = 'black';
+      } else {
+        footer.textContent += `اعتبار تا تاریخ: ${timestampToPersianDate(res.value)}`;
+        footerDiv.style.backgroundColor = "lightgreen";
+        footer.style.color = 'black';
+      }
+    } else {
+      footer.textContent += `مدت اعتبار پایان یافته است. نسبت به تمدید اعتبار اقدام فرمایید.`;
+      footerDiv.style.backgroundColor = "red";
+      footer.style.color = 'black';
+    }
 
     // var start = new Date();
     // start.setUTCHours(0, 0, 0, 0);
@@ -314,6 +336,15 @@ function timestampToPersianDateTime(timestamp) {
   const time = new Date(+timestamp).toLocaleTimeString("fa-IR", { hour: '2-digit', minute: '2-digit' });
 
   return `${date}-${time}`;
+}
+
+function timestampToPersianDate(timestamp) {
+  if (!timestamp) return;
+  return new Date(+timestamp).toLocaleDateString("fa-IR");
+}
+
+function dateDiff(first, second) {
+  return Math.round((second - first) / (1000 * 60 * 60 * 24));
 }
 
 async function toggleSection(name) {

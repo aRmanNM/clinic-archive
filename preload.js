@@ -14,3 +14,13 @@ contextBridge.exposeInMainWorld('dialog', {
     return ipcRenderer.invoke('dialog-confirm', message, title);
   },
 });
+
+contextBridge.exposeInMainWorld('application', {
+  checkApp() {
+    return ipcRenderer.invoke('check-app');
+  },
+
+  getVersion() {
+    return ipcRenderer.invoke('get-version');
+  }
+});

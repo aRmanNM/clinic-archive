@@ -14342,7 +14342,7 @@ Please add \`${key}Action\` when creating your handler.`);
   var defaultStyle = {
     size: 2,
     strokeWidth: 0,
-    thinning: 0.9,
+    thinning: 0,
     streamline: 0.5,
     smoothing: 0.5,
     easing: "linear",
@@ -17168,17 +17168,20 @@ hr {
     useHotkeys("command+z,ctrl+z", () => {
       app.undo();
     });
-    useHotkeys("command+shift+z,ctrl+shift+z", () => {
+    useHotkeys("command+y,ctrl+y", () => {
       app.redo();
     });
-    useHotkeys("command+c,ctrl+c", () => {
-      app.copySvg();
+    useHotkeys("command+s,ctrl+s", () => {
+      app.saveCanvas();
     });
     useHotkeys("command+shift+c,ctrl+shift+c", () => {
       app.copyStyles();
     });
-    useHotkeys("e,backspace", () => {
+    useHotkeys("delete,backspace", () => {
       app.resetDoc();
+    });
+    useHotkeys("escape", () => {
+      app.returnToPatient();
     });
   }
 

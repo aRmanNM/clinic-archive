@@ -2,12 +2,13 @@ const { app, BrowserWindow } = require("electron/main");
 const db = require("./dbmanager")
 const path = require("node:path");
 const { dialog, ipcMain } = require("electron");
+const fs = require("fs");
 
 let win;
 
 if (require('electron-squirrel-startup')) app.quit();
 
-const createWindow = () => {
+const createWindow = async () => {
   win = new BrowserWindow({
     width: 1366,
     height: 768,
@@ -16,11 +17,32 @@ const createWindow = () => {
       nodeIntegration: true,
       contextIsolation: true,
       sandbox: false,
+      devTools: false
     },
   });
 
   win.menuBarVisible = false;
   win.loadFile("index.html");
+
+  ipcMain.handle('get-version', async (event) => {
+    return app.getVersion();
+  });
+
+  ipcMain.handle('check-app', async (event) => {
+    const metaPath = process.platform === "win32"
+      ? app.getPath('appData') + "\\cb37bbc3-9a34-42f4-951c-4175f8326cab"
+      : app.getPath('appData') + "/cb37bbc3-9a34-42f4-951c-4175f8326cab";
+    // console.log(metaPath);
+    if (fs.existsSync(metaPath)) {
+      const val = fs.readFileSync(metaPath, "utf8");
+      return { value: val }
+    } else {
+      return { value: "1728246600000" } // valid
+      // return { value: "1727683029000" } // less than four
+      // return { value: "1727591266000" } // invalid
+
+    }
+  });
 
   ipcMain.on('dialog-message', (event, message, title) => {
     dialog.showMessageBox({ message: message, title: title });
