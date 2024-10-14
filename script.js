@@ -9,12 +9,12 @@ async function searchPatient() {
 
   let result;
   if (input.value) {
-    var res = await window.application.checkApp();
-    if (Date.now() > res.value) {
-      result = [];
-    } else {
-      result = window.sqlite.dbrepo?.searchPatient(input.value);
-    }
+    // var res = await window.application.checkApp();
+    // if (Date.now() > res.value) {
+    //   result = [];
+    // } else {
+    result = window.sqlite.dbrepo?.searchPatient(input.value);
+    // }
   }
 
   if (!input.value || result.length === 0) {
@@ -337,29 +337,30 @@ function returnToBase() {
 
 async function initSection(name) {
   if (name == 'search') {
-    let footer = document.getElementById('search-footer');
-    let footerDiv = document.getElementById('footer');
+    // let footer = document.getElementById('search-footer');
+    // let footerDiv = document.getElementById('footer');
 
     var res = await window.application.checkApp();
     var version = await window.application.getVersion();
-    footer.textContent = `نسخه: ${version} - `;
+    // footer.textContent = `نسخه: ${version} - `;
+    footer.textContent = `نسخه: ${version}`;
 
-    if (Date.now() < res.value) {
-      const diff = dateDiff(Date.now(), res.value);
-      if (diff < 4) {
-        footer.textContent += `اعتبار تا تاریخ: ${timestampToPersianDate(res.value)} (${diff} روز باقیمانده)`;
-        footerDiv.style.backgroundColor = "yellow";
-        footer.style.color = 'black';
-      } else {
-        footer.textContent += `اعتبار تا تاریخ: ${timestampToPersianDate(res.value)}`;
-        footerDiv.style.backgroundColor = "lightgreen";
-        footer.style.color = 'black';
-      }
-    } else {
-      footer.textContent += `مدت اعتبار پایان یافته است. نسبت به تمدید اعتبار اقدام فرمایید.`;
-      footerDiv.style.backgroundColor = "red";
-      footer.style.color = 'black';
-    }
+    // if (Date.now() < res.value) {
+    //   const diff = dateDiff(Date.now(), res.value);
+    //   if (diff < 4) {
+    //     footer.textContent += `اعتبار تا تاریخ: ${timestampToPersianDate(res.value)} (${diff} روز باقیمانده)`;
+    //     footerDiv.style.backgroundColor = "yellow";
+    //     footer.style.color = 'black';
+    //   } else {
+    //     footer.textContent += `اعتبار تا تاریخ: ${timestampToPersianDate(res.value)}`;
+    //     footerDiv.style.backgroundColor = "lightgreen";
+    //     footer.style.color = 'black';
+    //   }
+    // } else {
+    //   footer.textContent += `مدت اعتبار پایان یافته است. نسبت به تمدید اعتبار اقدام فرمایید.`;
+    //   footerDiv.style.backgroundColor = "red";
+    //   footer.style.color = 'black';
+    // }
 
     // var start = new Date();
     // start.setUTCHours(0, 0, 0, 0);
