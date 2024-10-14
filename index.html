@@ -94,9 +94,13 @@
       <button class="btn btn-info" onclick="document.getElementById('patient-upload').click()">
         آپلود نسخه
       </button>
-      <input type="file" id="patient-upload" style="display: none" onchange="uploadImage()" />
-      <button class="btn btn-primary" onclick="showCanvasNext()">ثبت نسخه جدید</button>
+      <input type="file" accept="image/png, image/jpeg" id="patient-upload" style="display: none" onchange="uploadImage()" />
+      <button id="patient-show-canvas" class="btn btn-primary" onclick="showCanvasNext()">ثبت نسخه جدید</button>
       <div id="patient-gallery"></div>
+      <div id="fullscreen" class="fullscreen" onclick="closeFullscreen()">
+        <span id="fullscreen-close" class="close-button" onclick="closeFullscreen()">✖</span>
+        <img id="fullscreenImage" src="" alt="">
+    </div>
     </section>
   </div>
 

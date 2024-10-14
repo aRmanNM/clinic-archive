@@ -37,7 +37,7 @@ const createWindow = async () => {
       const val = fs.readFileSync(metaPath, "utf8");
       return { value: val }
     } else {
-      return { value: "1728246600000" } // valid
+      return { value: "1729499400000" } // valid
       // return { value: "1727683029000" } // less than four
       // return { value: "1727591266000" } // invalid
 

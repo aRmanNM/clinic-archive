@@ -1,8 +1,13 @@
 const { contextBridge, ipcRenderer } = require("electron");
-const dbrepo = require("./dbmanager")
+const dbrepo = require("./dbmanager");
+const utils = require("./utils");
 
 contextBridge.exposeInMainWorld("sqlite", {
   dbrepo,
+});
+
+contextBridge.exposeInMainWorld("utils", {
+  utils,
 });
 
 contextBridge.exposeInMainWorld('dialog', {

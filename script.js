@@ -103,6 +103,9 @@ async function showPatient(id) {
   let patientLastCaseCreatedAt = document.getElementById("patient-lastCaseCreatedAt");
   let patientTotalCase = document.getElementById("patient-totalCase");
 
+  let patientShowCanvas = document.getElementById("patient-show-canvas");
+  patientShowCanvas.focus();
+
   let patientGallery = document.getElementById("patient-gallery");
 
   patientGallery.replaceChildren();
@@ -111,7 +114,7 @@ async function showPatient(id) {
   // console.log(patient);
 
   let counter = 0;
-  patient.forEach((element) => {
+  patient.forEach(async (element) => {
     if (element.image) {
       counter += 1;
       let imageElement = document.createElement("img");
@@ -121,18 +124,41 @@ async function showPatient(id) {
 
       deleteButton.className = "patient-case-delete-button";
       deleteButton.textContent = "❌";
+      deleteButton.tabIndex = -1
 
       imageElement.width = 300;
       imageElement.height = 150;
-      // const blob = new Blob([element.image], { type: "image/png" });
-      const blob = new Blob([element.image], { type: "image/svg+xml" });
-      // console.log(blob);
+
+
+      let blob = new Blob([element.image]);
+      const format = await window.utils.utils.detectBlobType(blob);
+
+      if (format == "JPEG") {
+        blob = new Blob([element.image], { type: "image/jpg" });
+      } else if (format == "PNG") {
+        blob = new Blob([element.image], { type: "image/png" });
+      } else if (format == "SVG") {
+        blob = new Blob([element.image], { type: "image/svg+xml" });
+      }
+
       const blobUrl = URL.createObjectURL(blob);
       imageElement.src = blobUrl;
 
-      imageElement.onclick = () => {
-        window.location = `canvas.html?patientId=${id}&caseId=${element.caseId}`;
-      };
+      if (format == "JPEG" || format == "PNG") {
+        imageElement.addEventListener("click", () => {
+          openFullscreen(blobUrl);
+          document.addEventListener("keydown", async e => {
+            if ((e.key == "Escape" || e.key == "Esc") && e.shiftKey == false) {
+              e.preventDefault();
+              closeFullscreen();
+            }
+          });
+        });
+      } else {
+        imageElement.onclick = () => {
+          window.location = `canvas.html?patientId=${id}&caseId=${element.caseId}`;
+        };
+      }
 
       deleteButton.onclick = async () => {
         const response = await window.dialog.showConfirmDialog("بعد از حذف امکان بازگردانی وجود نخواهد داشت. آیا اطمینان دارید؟", "");
@@ -195,6 +221,19 @@ function showForm(id) {
   } else {
     button.value = "ساخت";
   }
+}
+
+function openFullscreen(img) {
+  const fullscreen = document.getElementById('fullscreen');
+  const fullscreenImage = document.getElementById('fullscreenImage');
+
+  fullscreenImage.src = img; // Set the source of the full screen image
+  fullscreen.style.display = 'flex'; // Show the full screen overlay
+}
+
+function closeFullscreen() {
+  const fullscreen = document.getElementById('fullscreen');
+  fullscreen.style.display = 'none'; // Hide the full screen overlay
 }
 
 function uploadImage() {
@@ -327,6 +366,18 @@ async function initSection(name) {
 
     // const res = window.sqlite.dbrepo?.getStats(start.getTime());
     // footer.innerText = `تعداد کل مراجعین: ${res.total} - تعداد مراجعین امروز: ${res.todayTotal}`;
+
+    const searchInput = document.getElementById('search-input');
+    searchInput.focus();
+    searchInput.addEventListener("keydown", async e => {
+      if (e.key == "Enter" && e.shiftKey == false) {
+        e.preventDefault();
+        await searchPatient();
+      }
+    });
+  } else if (name == "form") {
+    const nameInput = document.getElementById("form-name");
+    nameInput.focus();
   }
 }
 
